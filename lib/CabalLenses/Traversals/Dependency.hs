@@ -3,6 +3,7 @@
 module CabalLenses.Traversals.Dependency
    ( dependency
    , dependencyIf
+   , dependencyToString
    ) where
 
 import CabalLenses.Section (Section(..))
@@ -28,6 +29,14 @@ dependencyIf condVars Library           = condLibraryL . _Just . traverseDepende
 dependencyIf condVars (Executable name) = condExecutablesL . traverse . having name . _2 . traverseDependencyIf condVars
 dependencyIf condVars (TestSuite name)  = condTestSuitesL . traverse . having name . _2 . traverseDependencyIf condVars
 dependencyIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDependencyIf condVars
+
+
+-- | An iso that converts a 'Dependency' to a 'String' containing the name of the dependency.
+dependencyToString :: Iso' Dependency String
+dependencyToString = iso toString toDep
+   where
+      toString (Dependency (PackageName name) _) = name
+      toDep name = Dependency (PackageName name) anyVersion
 
 
 having name = filtered ((== name) . fst) 
