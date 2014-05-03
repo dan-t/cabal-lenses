@@ -15,7 +15,7 @@ pkgNameString :: Lens' PackageName String
 pkgNameString = lens getString setString
    where
       getString (PackageName str) = str
-      setString _ newStr          = PackageName newStr
+      setString _                 = PackageName
 
 
 makeLensesFor [ ("pkgName"   , "pkgNameL")
@@ -33,5 +33,5 @@ depPackageName = lens getPkgName setPkgName
 depVersionRange :: Lens' Dependency VersionRange
 depVersionRange = lens getRange setRange
    where
-      getRange (Dependency _ range)            = range
-      setRange (Dependency pkgName _) newRange = Dependency pkgName newRange 
+      getRange (Dependency _ range)   = range
+      setRange (Dependency pkgName _) = Dependency pkgName

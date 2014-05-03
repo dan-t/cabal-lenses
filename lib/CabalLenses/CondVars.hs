@@ -56,18 +56,18 @@ fromDefaults pkgDescrp = CondVars { flags           = flags
 -- | Enable the given flag in 'CondVars'.
 enableFlag :: FlagName -> CondVars -> CondVars
 enableFlag flag condVars =
-   condVars & flagsL %~ (HM.insert flag True)
+   condVars & flagsL %~ HM.insert flag True
 
 
 -- | Disable the given flag in 'CondVars'.
 disableFlag :: FlagName -> CondVars -> CondVars
 disableFlag flag condVars =
-   condVars & flagsL %~ (HM.insert flag False)
+   condVars & flagsL %~ HM.insert flag False
 
 
 -- | Evaluate the 'Condition' using the 'CondVars'.
-eval :: CondVars -> (Condition PD.ConfVar) -> Bool
-eval condVars cond = eval' cond
+eval :: CondVars -> Condition PD.ConfVar -> Bool
+eval condVars = eval'
    where
       eval' (Var var)    = hasVar var
       eval' (Lit val)    = val
