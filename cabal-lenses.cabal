@@ -24,7 +24,7 @@ library
         base >=3 && <5,
         lens >=4.0.1 && <4.1,
         unordered-containers >=0.2.3.3 && <0.3,
-        Cabal >=1.18.0 && <1.19
+        Cabal >=1.18.0 && <1.21
     exposed-modules: 
         CabalLenses
         CabalLenses.PackageDescription
