@@ -28,6 +28,7 @@ library
     exposed-modules: 
         CabalLenses
         CabalLenses.PackageDescription
+        CabalLenses.Package
         CabalLenses.CondVars
         CabalLenses.Section
         CabalLenses.Traversals.BuildInfo
