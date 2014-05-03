@@ -29,6 +29,7 @@ library
         CabalLenses
         CabalLenses.PackageDescription
         CabalLenses.Package
+        CabalLenses.Version
         CabalLenses.CondVars
         CabalLenses.Section
         CabalLenses.Traversals.BuildInfo
