@@ -1,4 +1,4 @@
-{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TupleSections, Rank2Types #-}
 
 module CabalLenses.Traversals.Internal
    ( traverseDataIf
@@ -13,15 +13,13 @@ import Distribution.PackageDescription (CondTree(..), ConfVar)
 import Distribution.Package (Dependency(..))
 import Data.Traversable (traverse)
 import Control.Applicative (Applicative, pure, (<$>), (<*>))
+import Control.Lens (Traversal')
 
 type CondTree' a = CondTree ConfVar [Dependency] a
 
 
 -- | A traversal for all 'condTreeData' of 'CondTree' that match 'CondVars'.
-traverseDataIf :: Applicative f => CondVars
-                                -> (dat -> f dat)
-                                -> CondTree' dat
-                                -> f (CondTree' dat)
+traverseDataIf :: CondVars -> Traversal' (CondTree' dat) dat
 traverseDataIf condVars f (CondNode dat constr comps) =
    CondNode <$> f dat
             <*> pure constr
@@ -40,9 +38,7 @@ traverseDataIf condVars f (CondNode dat constr comps) =
 
 
 -- | A traversal for all 'condTreeData' (the if and else branches) of the 'CondTree'.
-traverseData :: Applicative f => (dat -> f dat)
-                              -> CondTree' dat
-                              -> f (CondTree' dat)
+traverseData :: Traversal' (CondTree' dat) dat
 traverseData f (CondNode dat constr comps) =
    CondNode <$> f dat
             <*> pure constr
@@ -53,10 +49,7 @@ traverseData f (CondNode dat constr comps) =
 
 
 -- | A traversal for all 'condTreeConstraints' of 'CondTree' that match 'CondVars'.
-traverseDependencyIf :: Applicative f => CondVars
-                                      -> (Dependency -> f Dependency)
-                                      -> CondTree' dat
-                                      -> f (CondTree' dat)
+traverseDependencyIf :: CondVars -> Traversal' (CondTree' dat) Dependency
 traverseDependencyIf condVars f (CondNode dat constr comps) =
    CondNode <$> pure dat
             <*> traverse f constr
@@ -75,9 +68,7 @@ traverseDependencyIf condVars f (CondNode dat constr comps) =
 
 
 -- | A traversal for all 'condTreeConstraints' (the if and else branches) of the 'CondTree'.
-traverseDependency :: Applicative f => (Dependency -> f Dependency)
-                                    -> CondTree' dat
-                                    -> f (CondTree' dat)
+traverseDependency :: Traversal' (CondTree' dat) Dependency
 traverseDependency f (CondNode dat constr comps) =
    CondNode <$> pure dat
             <*> traverse f constr
