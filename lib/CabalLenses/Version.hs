@@ -6,10 +6,31 @@
 
 module CabalLenses.Version where
 
-import Distribution.Version (Version(..))
-import Control.Lens (makeLensesFor)
+import Distribution.Version
+import Control.Lens
+import Data.Maybe (fromMaybe)
+import Control.Applicative ((<$>))
 
 
 makeLensesFor [ ("versionBranch", "versionBranchL")
               , ("versionTags"  , "versionTagsL")
               ] ''Version
+
+
+rangeToIntervals :: Iso' VersionRange [VersionInterval]
+rangeToIntervals = iso asVersionIntervals toVersionRange
+   where
+      toVersionRange intervals =
+         fromMaybe anyVersion (fromVersionIntervals <$> mkVersionIntervals intervals)
+
+
+lowerBound :: Lens' VersionInterval LowerBound
+lowerBound = _1
+
+
+upperBound :: Lens' VersionInterval UpperBound
+upperBound = _2
+
+
+noLowerBound :: LowerBound
+noLowerBound = LowerBound (Version [0] []) InclusiveBound
