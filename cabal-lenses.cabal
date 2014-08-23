@@ -13,6 +13,7 @@ category: Utils
 author: Daniel Trstenjak
 extra-source-files:
     README.md
+    CHANGELOG
  
 source-repository head
     type: git
