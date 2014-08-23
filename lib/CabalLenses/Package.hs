@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, TypeFamilies, FlexibleInstances, MultiParamTypeClasses #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.Package' module.
@@ -8,14 +8,7 @@ module CabalLenses.Package where
 
 import Distribution.Package (PackageName(..) , PackageIdentifier(..) , Dependency(..))
 import Distribution.Version (VersionRange)
-import Control.Lens (makeLensesFor, Lens', lens)
-
-
-pkgNameString :: Lens' PackageName String
-pkgNameString = lens getString setString
-   where
-      getString (PackageName str) = str
-      setString _                 = PackageName
+import Control.Lens
 
 
 makeLensesFor [ ("pkgName"   , "pkgNameL")
@@ -23,15 +16,24 @@ makeLensesFor [ ("pkgName"   , "pkgNameL")
               ] ''PackageIdentifier
 
 
-depPackageName :: Lens' Dependency PackageName
-depPackageName = lens getPkgName setPkgName
+instance (t ~ PackageName) => Rewrapped PackageName t
+instance Wrapped PackageName where
+  type Unwrapped PackageName = String
+  _Wrapped' = iso getPackageName PackageName
+     where
+        getPackageName (PackageName n) = n
+  {-# INLINE _Wrapped' #-}
+
+
+packageName :: Lens' Dependency PackageName
+packageName = lens getPkgName setPkgName
    where
       getPkgName (Dependency pkgName _)          = pkgName
       setPkgName (Dependency _ range) newPkgName = Dependency newPkgName range
 
 
-depVersionRange :: Lens' Dependency VersionRange
-depVersionRange = lens getRange setRange
+versionRange :: Lens' Dependency VersionRange
+versionRange = lens getRange setRange
    where
       getRange (Dependency _ range)   = range
       setRange (Dependency pkgName _) = Dependency pkgName

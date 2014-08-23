@@ -17,8 +17,8 @@ makeLensesFor [ ("versionBranch", "versionBranchL")
               ] ''Version
 
 
-rangeToIntervals :: Iso' VersionRange [VersionInterval]
-rangeToIntervals = iso asVersionIntervals toVersionRange
+intervals :: Iso' VersionRange [VersionInterval]
+intervals = iso asVersionIntervals toVersionRange
    where
       toVersionRange intervals =
          fromMaybe anyVersion (fromVersionIntervals <$> mkVersionIntervals intervals)
@@ -26,6 +26,20 @@ rangeToIntervals = iso asVersionIntervals toVersionRange
 
 lowerBound :: Lens' VersionInterval LowerBound
 lowerBound = _1
+
+
+version :: Lens' LowerBound Version
+version = lens getVersion setVersion
+   where
+      getVersion (LowerBound vers _)          = vers
+      setVersion (LowerBound _    bound) vers = LowerBound vers bound
+
+
+bound :: Lens' LowerBound Bound
+bound = lens getBound setBound
+   where
+      getBound (LowerBound _ bound)      = bound
+      setBound (LowerBound vers _) bound = LowerBound vers bound
 
 
 upperBound :: Lens' VersionInterval UpperBound
