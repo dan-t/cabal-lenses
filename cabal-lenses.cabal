@@ -9,8 +9,9 @@ synopsis: Lenses and traversals for the Cabal library.
 description:
     Lenses and traversals (compatible with the <https://hackage.haskell.org/package/lens lens> library) for
     the <https://hackage.haskell.org/package/Cabal Cabal> library.
-category: Utils
+category: Utils, Development
 author: Daniel Trstenjak
+tested-with: GHC ==7.6.2 GHC ==7.6.3 GHC ==7.8.3
 extra-source-files:
     README.md
     CHANGELOG
