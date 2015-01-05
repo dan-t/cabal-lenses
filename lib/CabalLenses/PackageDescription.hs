@@ -94,6 +94,7 @@ makeLensesFor [ ("hsSourceDirs"      , "hsSourceDirsL")
               , ("ldOptions"         , "ldOptionsL")
               , ("includeDirs"       , "includeDirsL")
               , ("includes"          , "includesL")
+              , ("targetBuildDepends", "targetBuildDependsL")
               ] ''BuildInfo
 
 
