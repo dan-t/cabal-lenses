@@ -1,7 +1,8 @@
 {-# LANGUAGE Rank2Types #-}
 
 module CabalLenses.Traversals.BuildInfo
-   ( buildInfo
+   ( allBuildInfo
+   , buildInfo
    , buildInfoIf
    ) where
 
@@ -10,8 +11,18 @@ import CabalLenses.Traversals.Internal (traverseData, traverseDataIf)
 import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
-import Distribution.PackageDescription (GenericPackageDescription, BuildInfo)
+import Control.Applicative ((<$>), (<*>), pure)
+import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription), BuildInfo)
 
+-- | A traversal for all 'BuildInfo' of all 'Section'
+allBuildInfo :: Traversal' GenericPackageDescription BuildInfo
+allBuildInfo f (GenericPackageDescription descrp flags lib exes tests benchs) =
+   GenericPackageDescription <$> pure descrp
+                             <*> pure flags
+                             <*> (_Just . traverseData . libBuildInfoL) f lib
+                             <*> (traverse . _2 . traverseData . buildInfoL) f exes
+                             <*> (traverse . _2 . traverseData . testBuildInfoL) f tests
+                             <*> (traverse . _2 . traverseData . benchmarkBuildInfoL) f benchs
 
 -- | A traversal for all 'BuildInfo' of 'Section'.
 buildInfo :: Section -> Traversal' GenericPackageDescription BuildInfo
@@ -29,4 +40,4 @@ buildInfoIf condVars (TestSuite name)  = condTestSuitesL . traverse . having nam
 buildInfoIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDataIf condVars . benchmarkBuildInfoL
 
 
-having name = filtered ((== name) . fst) 
+having name = filtered ((== name) . fst)
