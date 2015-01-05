@@ -1,3 +1,8 @@
+0.4.4
+-----
+* Add traversal 'allBuildInfo'
+* Add lens for 'targetBuildDepends' field
+
 0.3.1, 0.4.1, 0.4.2, 0.4.3
 --------------------------
 * Raise upper bounds of dependencies
