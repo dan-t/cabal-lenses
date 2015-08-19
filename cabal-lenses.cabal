@@ -1,5 +1,5 @@
 name: cabal-lenses
-version: 0.4.5
+version: 0.4.6
 cabal-version: >=1.9.2
 build-type: Simple
 license: BSD3
@@ -25,7 +25,13 @@ library
         base >=3 && <5,
         lens >=4.0.1 && <4.9,
         unordered-containers >=0.2.3.3 && <0.3,
-        Cabal >=1.16.0 && <1.23
+        Cabal >=1.16.0 && <1.23,
+        either >=4.1.1 && <4.4,
+        system-filepath >=0.4.9 && <0.5,
+        system-fileio >=0.3.12 && <0.4,
+        strict >=0.3.2 && <0.4,
+        text >=1.1.0.1 && <1.3,
+        transformers >=0.3.0.0 && <0.5
     exposed-modules:
         CabalLenses
         CabalLenses.PackageDescription
@@ -35,6 +41,7 @@ library
         CabalLenses.Section
         CabalLenses.Traversals.BuildInfo
         CabalLenses.Traversals.Dependency
+        CabalLenses.Utils
     exposed: True
     buildable: True
     cpp-options: -DCABAL

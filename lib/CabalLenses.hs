@@ -7,6 +7,7 @@ module CabalLenses
    , module CabalLenses.Section
    , module CabalLenses.Traversals.BuildInfo
    , module CabalLenses.Traversals.Dependency
+   , module CabalLenses.Utils
    ) where
 
 import CabalLenses.CondVars
@@ -16,3 +17,4 @@ import CabalLenses.Version
 import CabalLenses.Section
 import CabalLenses.Traversals.BuildInfo
 import CabalLenses.Traversals.Dependency
+import CabalLenses.Utils
