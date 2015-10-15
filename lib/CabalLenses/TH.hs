@@ -12,5 +12,5 @@ suffixedFields = defaultFieldRules & lensField .~ suffixedNamer "L"
 -- | accepts all fields, and suffixes them with the given suffix
 suffixedNamer :: String -> Name -> [Name] -> Name -> [DefName]
 suffixedNamer suffix _typeName _fieldNames fieldName =
- [TopName$ mkName (nameBase fieldName ++ suffix)]
+ [TopName (mkName (nameBase fieldName ++ suffix))]
 

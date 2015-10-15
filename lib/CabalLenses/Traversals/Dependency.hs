@@ -1,5 +1,7 @@
-{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE Rank2Types, CPP #-}
+{-| 
 
+-}
 module CabalLenses.Traversals.Dependency
    ( allDependency
    , allDependencyIf
@@ -14,6 +16,10 @@ import CabalLenses.PackageDescription
 import Control.Lens
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription))
 import Distribution.Package (Dependency)
+
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>), (<*>), pure)
+#endif
 
 
 -- | A traversal for all 'Dependency' of all 'Section'.

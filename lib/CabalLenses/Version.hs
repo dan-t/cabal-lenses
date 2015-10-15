@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, CPP #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.Version' module.
@@ -11,6 +11,9 @@ import Distribution.Version
 import Control.Lens
 import Data.Maybe (fromMaybe)
 
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>))
+#endif
 
 makeLensesWith suffixedFields ''Version
 

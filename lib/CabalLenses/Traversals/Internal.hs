@@ -1,5 +1,7 @@
-{-# LANGUAGE TupleSections, Rank2Types #-}
+{-# LANGUAGE TupleSections, Rank2Types, CPP #-}
+{-| 
 
+-}
 module CabalLenses.Traversals.Internal
    ( traverseDataIf
    , traverseData
@@ -15,8 +17,11 @@ import Distribution.Package (Dependency(..))
 
 import Control.Lens (Traversal',Optic',Choice,filtered)
 
-type CondTree' a = CondTree ConfVar [Dependency] a
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>), (<*>), pure)
+#endif
 
+type CondTree' a = CondTree ConfVar [Dependency] a
 
 -- | A traversal for all 'condTreeData' of 'CondTree' that match 'CondVars'.
 traverseDataIf :: CondVars -> Traversal' (CondTree' dat) dat

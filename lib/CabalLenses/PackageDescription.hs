@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, CPP #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.PackageDescription' module.
@@ -18,26 +18,19 @@ import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        )
 import Control.Lens (makeLensesWith)
 
-
 makeLensesWith suffixedFields ''GenericPackageDescription
-
 
 makeLensesWith suffixedFields ''PackageDescription
 
-
 makeLensesWith suffixedFields ''Library
-
 
 makeLensesWith suffixedFields ''Executable
 
-
 makeLensesWith suffixedFields ''TestSuite
-
 
 makeLensesWith suffixedFields ''Benchmark
 
-
 makeLensesWith suffixedFields ''BuildInfo
 
-
 makeLensesWith suffixedFields ''CondTree
+

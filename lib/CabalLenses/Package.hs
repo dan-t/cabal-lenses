@@ -1,9 +1,9 @@
 {-# LANGUAGE TemplateHaskell, TypeFamilies, FlexibleInstances, MultiParamTypeClasses #-}
-
--- |
--- Lenses for several data types of the 'Distribution.Package' module.
--- All lenses are named after their field names with a 'L' appended.
 {-# OPTIONS_GHC -fno-warn-orphans #-}
+{-| Lenses for several data types of the 'Distribution.Package' module.
+All lenses are named after their field names with a 'L' appended. 
+
+-}
 module CabalLenses.Package where
 import CabalLenses.TH (suffixedFields) 
 

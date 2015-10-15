@@ -1,5 +1,7 @@
-{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE Rank2Types, CPP #-}
+{-| 
 
+-}
 module CabalLenses.Traversals.BuildInfo
    ( allBuildInfo
    , buildInfo
@@ -12,6 +14,10 @@ import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription), BuildInfo)
+
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>), (<*>), pure)
+#endif
 
 -- | A traversal for all 'BuildInfo' of all 'Section'
 allBuildInfo :: Traversal' GenericPackageDescription BuildInfo
