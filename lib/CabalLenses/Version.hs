@@ -5,15 +5,14 @@
 -- All lenses are named after their field names with a 'L' appended.
 
 module CabalLenses.Version where
+import CabalLenses.TH (suffixedFields) 
 
 import Distribution.Version
 import Control.Lens
 import Data.Maybe (fromMaybe)
 
 
-makeLensesFor [ ("versionBranch", "versionBranchL")
-              , ("versionTags"  , "versionTagsL")
-              ] ''Version
+makeLensesWith suffixedFields ''Version
 
 
 intervals :: Iso' VersionRange [VersionInterval]

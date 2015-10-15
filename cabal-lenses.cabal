@@ -1,5 +1,5 @@
 name: cabal-lenses
-version: 0.4.6
+version: 0.5.0
 cabal-version: >=1.9.2
 build-type: Simple
 license: BSD3
@@ -11,7 +11,7 @@ description:
     the <https://hackage.haskell.org/package/Cabal Cabal> library.
 category: Utils, Development
 author: Daniel Trstenjak
-tested-with: GHC ==7.6.2 GHC ==7.6.3 GHC ==7.8.3 GHC ==7.10.1
+tested-with: GHC ==7.10.1
 extra-source-files:
     README.md
     CHANGELOG
@@ -19,11 +19,12 @@ extra-source-files:
 source-repository head
     type: git
     location: https://github.com/dan-t/cabal-lenses
- 
+
 library
     build-depends:
-        lens >=4.0.1 && <4.9,
+        lens >=4.0.1 && <4.14,
         unordered-containers >=0.2.3.3 && <0.3,
+        -- Cabal ==1.24.*,
         Cabal >=1.16.0 && <1.23,
         either >=4.1.1 && <4.4,
         system-filepath >=0.4.9 && <0.5,
@@ -31,6 +32,7 @@ library
         strict >=0.3.2 && <0.4,
         text >=1.1.0.1 && <1.3,
         transformers >=0.3.0.0 && <0.5, 
+        template-haskell >=2.7.0 && <2.11.0, 
         base >=3 && <5
     exposed-modules:
         CabalLenses
@@ -43,6 +45,7 @@ library
         CabalLenses.Traversals.BuildInfo
         CabalLenses.Traversals.Dependency
         CabalLenses.Utils
+        CabalLenses.TH
     exposed: True
     buildable: True
     cpp-options: -DCABAL

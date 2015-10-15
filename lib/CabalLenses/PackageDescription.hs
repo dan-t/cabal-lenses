@@ -5,6 +5,7 @@
 -- All lenses are named after their field names with a 'L' appended.
 
 module CabalLenses.PackageDescription where
+import CabalLenses.TH (suffixedFields) 
 
 import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        , PackageDescription(..)
@@ -15,90 +16,28 @@ import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        , BuildInfo(..)
                                        , CondTree(..)
                                        )
-import Control.Lens (makeLensesFor)
+import Control.Lens (makeLensesWith)
 
 
-makeLensesFor [ ("packageDescription", "packageDescriptionL")
-              , ("genPackageFlags"   , "genPackageFlagsL")
-              , ("condLibrary"       , "condLibraryL")
-              , ("condExecutables"   , "condExecutablesL")
-              , ("condTestSuites"    , "condTestSuitesL")
-              , ("condBenchmarks"    , "condBenchmarksL")
-              ] ''GenericPackageDescription
+makeLensesWith suffixedFields ''GenericPackageDescription
 
 
-makeLensesFor [ ("package"       , "packageL")
-              , ("license"       , "licenseL")
-              , ("licenseFile"   , "licenseFileL")
-              , ("copyright"     , "copyrightL")
-              , ("maintainer"    , "maintainerL")
-              , ("author"        , "authorL")
-              , ("stability"     , "stabilityL")
-              , ("testedWith"    , "testedWithL")
-              , ("homepage"      , "homepageL")
-              , ("pkgUrl"        , "pkgUrlL")
-              , ("bugReports"    , "bugReports")
-              , ("sourceRepos"   , "sourceReposL")
-              , ("synopsis"      , "synopsisL")
-              , ("description"   , "descriptionL")
-              , ("category"      , "categoryL")
-              , ("customFieldsPD", "customFieldsPDL")
-              , ("buildDepends"  , "buildDependsL")
-              , ("specVersionRaw", "specVersionRawL")
-              , ("buildType"     , "buildTypeL")
-              , ("library"       , "libraryL")
-              , ("executables"   , "executablesL")
-              , ("testSuites"    , "testSuitesL")
-              , ("benchmarks"    , "benchmarksL")
-              , ("dataFiles"     , "dataFilesL")
-              , ("dataDir"       , "dataDirL")
-              , ("extraSrcFiles" , "extraSrcFilesL")
-              , ("extraTmpFiles" , "extraTmpFilesL")
-              ] ''PackageDescription
+makeLensesWith suffixedFields ''PackageDescription
 
 
-makeLensesFor [ ("exposedModules", "exposedModulesL")
-              , ("libExposed"    , "libExposedL")
-              , ("libBuildInfo"  , "libBuildInfoL")
-              ] ''Library
+makeLensesWith suffixedFields ''Library
 
 
-makeLensesFor [ ("exeName"   , "exeNameL")
-              , ("modulePath", "modulePathL")
-              , ("buildInfo" , "buildInfoL")
-              ] ''Executable
+makeLensesWith suffixedFields ''Executable
 
 
-makeLensesFor [ ("testName"     , "testNameL")
-              , ("testInterface", "testInterfaceL")
-              , ("testBuildInfo", "testBuildInfoL")
-              , ("testEnabled"  , "testEnabledL")
-              ] ''TestSuite
+makeLensesWith suffixedFields ''TestSuite
 
 
-makeLensesFor [ ("benchmarkName", "benchmarkNameL")
-              , ("benchmarkInterface", "benchmarkInterfaceL")
-              , ("benchmarkBuildInfo", "benchmarkBuildInfoL")
-              , ("benchmarkEnabled"  , "benchmarkEnabledL")
-              ] ''Benchmark
+makeLensesWith suffixedFields ''Benchmark
 
 
-makeLensesFor [ ("hsSourceDirs"      , "hsSourceDirsL")
-              , ("options"           , "optionsL")
-              , ("defaultLanguage"   , "defaultLanguageL")
-              , ("cppOptions"        , "cppOptionsL")
-              , ("cSources"          , "cSourcesL")
-              , ("ccOptions"         , "ccOptionsL")
-              , ("extraLibDirs"      , "extraLibDirsL")
-              , ("extraLibs"         , "extraLibsL")
-              , ("ldOptions"         , "ldOptionsL")
-              , ("includeDirs"       , "includeDirsL")
-              , ("includes"          , "includesL")
-              , ("targetBuildDepends", "targetBuildDependsL")
-              ] ''BuildInfo
+makeLensesWith suffixedFields ''BuildInfo
 
 
-makeLensesFor [ ("condTreeData"       , "condTreeDataL")
-              , ("condTreeConstraints", "condTreeConstraintsL")
-              , ("condTreeComponents" , "condTreeComponentsL")
-              ] ''CondTree
+makeLensesWith suffixedFields ''CondTree

@@ -1,12 +1,7 @@
 {-# Language TemplateHaskell, PatternGuards #-}
 
-module CabalLenses.CondVars
-   ( CondVars(..)
-   , fromDefaults
-   , enableFlag
-   , disableFlag
-   , eval
-   ) where
+module CabalLenses.CondVars where
+import CabalLenses.TH (suffixedFields) 
 
 import qualified Distribution.PackageDescription as PD
 import Distribution.PackageDescription (Condition(..))
@@ -33,8 +28,7 @@ data CondVars = CondVars
    } deriving (Show)
 
 
-makeLensesFor [ ("flags", "flagsL")
-              ] ''CondVars
+makeLensesWith suffixedFields ''CondVars
 
 
 -- | Create a 'CondVars' from the default flags of the cabal package description.
@@ -90,3 +84,4 @@ eval condVars = eval'
 
          | otherwise
          = False
+

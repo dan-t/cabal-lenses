@@ -5,15 +5,14 @@
 -- All lenses are named after their field names with a 'L' appended.
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module CabalLenses.Package where
+import CabalLenses.TH (suffixedFields) 
 
 import Distribution.Package (PackageName(..) , PackageIdentifier(..) , Dependency(..))
 import Distribution.Version (VersionRange)
 import Control.Lens
 
 
-makeLensesFor [ ("pkgName"   , "pkgNameL")
-              , ("pkgVersion", "pkgVersionL")
-              ] ''PackageIdentifier
+makeLensesWith suffixedFields ''PackageIdentifier
 
 
 instance (t ~ PackageName) => Rewrapped PackageName t
