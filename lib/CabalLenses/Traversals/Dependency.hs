@@ -8,11 +8,10 @@ module CabalLenses.Traversals.Dependency
    ) where
 
 import CabalLenses.Section (Section(..))
-import CabalLenses.Traversals.Internal (traverseDependency, traverseDependencyIf)
+import CabalLenses.Traversals.Internal (traverseDependency, traverseDependencyIf, having)
 import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
-import Control.Applicative ((<$>), (<*>), pure)
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription))
 import Distribution.Package (Dependency)
 
@@ -54,5 +53,3 @@ dependencyIf condVars (Executable name) = condExecutablesL . traverse . having n
 dependencyIf condVars (TestSuite name)  = condTestSuitesL . traverse . having name . _2 . traverseDependencyIf condVars
 dependencyIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDependencyIf condVars
 
-
-having name = filtered ((== name) . fst)

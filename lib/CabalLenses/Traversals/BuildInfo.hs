@@ -7,11 +7,10 @@ module CabalLenses.Traversals.BuildInfo
    ) where
 
 import CabalLenses.Section (Section(..))
-import CabalLenses.Traversals.Internal (traverseData, traverseDataIf)
+import CabalLenses.Traversals.Internal (traverseData, traverseDataIf, having)
 import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
-import Control.Applicative ((<$>), (<*>), pure)
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription), BuildInfo)
 
 -- | A traversal for all 'BuildInfo' of all 'Section'
@@ -39,5 +38,3 @@ buildInfoIf condVars (Executable name) = condExecutablesL . traverse . having na
 buildInfoIf condVars (TestSuite name)  = condTestSuitesL . traverse . having name . _2 . traverseDataIf condVars . testBuildInfoL
 buildInfoIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDataIf condVars . benchmarkBuildInfoL
 
-
-having name = filtered ((== name) . fst)

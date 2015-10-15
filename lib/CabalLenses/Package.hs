@@ -3,7 +3,7 @@
 -- |
 -- Lenses for several data types of the 'Distribution.Package' module.
 -- All lenses are named after their field names with a 'L' appended.
-
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 module CabalLenses.Package where
 
 import Distribution.Package (PackageName(..) , PackageIdentifier(..) , Dependency(..))
@@ -28,12 +28,12 @@ instance Wrapped PackageName where
 packageName :: Lens' Dependency PackageName
 packageName = lens getPkgName setPkgName
    where
-      getPkgName (Dependency pkgName _)          = pkgName
-      setPkgName (Dependency _ range) newPkgName = Dependency newPkgName range
+      getPkgName (Dependency thePackageName _)       = thePackageName
+      setPkgName (Dependency _ range) thePackageName = Dependency thePackageName range
 
 
 versionRange :: Lens' Dependency VersionRange
 versionRange = lens getRange setRange
    where
-      getRange (Dependency _ range)   = range
-      setRange (Dependency pkgName _) = Dependency pkgName
+      getRange (Dependency _ range)          = range
+      setRange (Dependency thePackageName _) = Dependency thePackageName 
