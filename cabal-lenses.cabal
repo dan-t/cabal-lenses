@@ -1,5 +1,5 @@
 name: cabal-lenses
-version: 0.5.0
+version: 0.4.7
 cabal-version: >=1.9.2
 build-type: Simple
 license: BSD3
@@ -21,11 +21,16 @@ source-repository head
     location: https://github.com/dan-t/cabal-lenses
 
 library
+
+
     build-depends:
         lens >=4.0.1 && <4.14,
         unordered-containers >=0.2.3.3 && <0.3,
-        -- Cabal ==1.24.*,
-        Cabal >=1.16.0 && <1.23,
+
+        Cabal ==1.22.*,
+        -- for Cabal, we let the minor version vary, because any new fields/cases are either ignored or exported as new lenses (i.e. API additions only)
+        -- tested with: cabal install 'Cabal ==1.22.4.0' 
+
         either >=4.1.1 && <4.4,
         system-filepath >=0.4.9 && <0.5,
         system-fileio >=0.3.12 && <0.4,
