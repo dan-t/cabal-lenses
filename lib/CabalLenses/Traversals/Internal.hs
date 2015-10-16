@@ -1,31 +1,37 @@
-{-# LANGUAGE TupleSections, Rank2Types #-}
+{-# LANGUAGE TupleSections, Rank2Types, CPP #-}
+{-| 
 
+-}
 module CabalLenses.Traversals.Internal
    ( traverseDataIf
    , traverseData
    , traverseDependencyIf
    , traverseDependency
+   , having 
    ) where
 
 import CabalLenses.CondVars (CondVars)
 import qualified CabalLenses.CondVars as CV
 import Distribution.PackageDescription (CondTree(..), ConfVar)
 import Distribution.Package (Dependency(..))
-import Data.Traversable (traverse)
-import Control.Applicative (pure, (<$>), (<*>))
-import Control.Lens (Traversal')
+
+import Control.Lens (Traversal',Optic',Choice,filtered)
+
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>), (<*>), pure)
+#endif
 
 type CondTree' a = CondTree ConfVar [Dependency] a
-
 
 -- | A traversal for all 'condTreeData' of 'CondTree' that match 'CondVars'.
 traverseDataIf :: CondVars -> Traversal' (CondTree' dat) dat
 traverseDataIf condVars f (CondNode dat constr comps) =
    CondNode <$> f dat
             <*> pure constr
-            <*> (traverse . traverseCompIf condVars) f comps  
-   where
-      traverseCompIf condVars f (cond, ifComp, elseComp) =
+            <*> traverse traverseCompDataIf comps  
+
+   where 
+   traverseCompDataIf (cond, ifComp, elseComp) =
          (,,) <$> pure cond <*> ifComp' <*> elseComp'
          where
             ifComp' | condMatches = traverseDataIf condVars f ifComp
@@ -42,9 +48,10 @@ traverseData :: Traversal' (CondTree' dat) dat
 traverseData f (CondNode dat constr comps) =
    CondNode <$> f dat
             <*> pure constr
-            <*> (traverse . traverseComp) f comps
-   where
-      traverseComp f (cond, ifComp, elseComp) =
+            <*> traverse traverseDataComp comps
+
+   where 
+   traverseDataComp (cond, ifComp, elseComp) =
          (,,) <$> pure cond <*> traverseData f ifComp <*> (traverse . traverseData) f elseComp
 
 
@@ -53,9 +60,10 @@ traverseDependencyIf :: CondVars -> Traversal' (CondTree' dat) Dependency
 traverseDependencyIf condVars f (CondNode dat constr comps) =
    CondNode <$> pure dat
             <*> traverse f constr
-            <*> (traverse . traverseCompIf condVars) f comps  
-   where
-      traverseCompIf condVars f (cond, ifComp, elseComp) =
+            <*> traverse traverseCompDependencyIf comps  
+
+   where 
+   traverseCompDependencyIf (cond, ifComp, elseComp) =
          (,,) <$> pure cond <*> ifComp' <*> elseComp'
          where
             ifComp' | condMatches = traverseDependencyIf condVars f ifComp
@@ -66,13 +74,19 @@ traverseDependencyIf condVars f (CondNode dat constr comps) =
 
             condMatches = CV.eval condVars cond
 
-
 -- | A traversal for all 'condTreeConstraints' (the if and else branches) of the 'CondTree'.
 traverseDependency :: Traversal' (CondTree' dat) Dependency
 traverseDependency f (CondNode dat constr comps) =
    CondNode <$> pure dat
             <*> traverse f constr
-            <*> (traverse . traverseComp) f comps
-   where
-      traverseComp f (cond, ifComp, elseComp) =
+            <*> traverse traverseDependencyComp comps
+
+   where 
+   traverseDependencyComp (cond, ifComp, elseComp) =
          (,,) <$> pure cond <*> traverseDependency f ifComp <*> (traverse . traverseDependency) f elseComp
+
+
+-- | 
+having :: (Eq a, Choice p, Applicative f) => a -> Optic' p f (a, b) (a, b) 
+having name = filtered ((== name) . fst)
+

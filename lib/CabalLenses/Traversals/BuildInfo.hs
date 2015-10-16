@@ -1,5 +1,7 @@
-{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE Rank2Types, CPP #-}
+{-| 
 
+-}
 module CabalLenses.Traversals.BuildInfo
    ( allBuildInfo
    , buildInfo
@@ -7,12 +9,15 @@ module CabalLenses.Traversals.BuildInfo
    ) where
 
 import CabalLenses.Section (Section(..))
-import CabalLenses.Traversals.Internal (traverseData, traverseDataIf)
+import CabalLenses.Traversals.Internal (traverseData, traverseDataIf, having)
 import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
-import Control.Applicative ((<$>), (<*>), pure)
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription), BuildInfo)
+
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>), (<*>), pure)
+#endif
 
 -- | A traversal for all 'BuildInfo' of all 'Section'
 allBuildInfo :: Traversal' GenericPackageDescription BuildInfo
@@ -39,5 +44,3 @@ buildInfoIf condVars (Executable name) = condExecutablesL . traverse . having na
 buildInfoIf condVars (TestSuite name)  = condTestSuitesL . traverse . having name . _2 . traverseDataIf condVars . testBuildInfoL
 buildInfoIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDataIf condVars . benchmarkBuildInfoL
 
-
-having name = filtered ((== name) . fst)

@@ -1,11 +1,13 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, CPP #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.PackageDescription' module.
 -- All lenses are named after their field names with a 'L' appended.
 
 module CabalLenses.PackageDescription where
+import CabalLenses.TH (makeLensesSuffixed) 
 
+import Distribution.ModuleName (ModuleName) 
 import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        , PackageDescription(..)
                                        , Library(..)
@@ -15,90 +17,33 @@ import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        , BuildInfo(..)
                                        , CondTree(..)
                                        )
-import Control.Lens (makeLensesFor)
+import Control.Lens(Traversal',each) 
 
+makeLensesSuffixed ''GenericPackageDescription
 
-makeLensesFor [ ("packageDescription", "packageDescriptionL")
-              , ("genPackageFlags"   , "genPackageFlagsL")
-              , ("condLibrary"       , "condLibraryL")
-              , ("condExecutables"   , "condExecutablesL")
-              , ("condTestSuites"    , "condTestSuitesL")
-              , ("condBenchmarks"    , "condBenchmarksL")
-              ] ''GenericPackageDescription
+makeLensesSuffixed ''PackageDescription
 
+makeLensesSuffixed ''Library
 
-makeLensesFor [ ("package"       , "packageL")
-              , ("license"       , "licenseL")
-              , ("licenseFile"   , "licenseFileL")
-              , ("copyright"     , "copyrightL")
-              , ("maintainer"    , "maintainerL")
-              , ("author"        , "authorL")
-              , ("stability"     , "stabilityL")
-              , ("testedWith"    , "testedWithL")
-              , ("homepage"      , "homepageL")
-              , ("pkgUrl"        , "pkgUrlL")
-              , ("bugReports"    , "bugReports")
-              , ("sourceRepos"   , "sourceReposL")
-              , ("synopsis"      , "synopsisL")
-              , ("description"   , "descriptionL")
-              , ("category"      , "categoryL")
-              , ("customFieldsPD", "customFieldsPDL")
-              , ("buildDepends"  , "buildDependsL")
-              , ("specVersionRaw", "specVersionRawL")
-              , ("buildType"     , "buildTypeL")
-              , ("library"       , "libraryL")
-              , ("executables"   , "executablesL")
-              , ("testSuites"    , "testSuitesL")
-              , ("benchmarks"    , "benchmarksL")
-              , ("dataFiles"     , "dataFilesL")
-              , ("dataDir"       , "dataDirL")
-              , ("extraSrcFiles" , "extraSrcFilesL")
-              , ("extraTmpFiles" , "extraTmpFilesL")
-              ] ''PackageDescription
+makeLensesSuffixed ''Executable
 
+makeLensesSuffixed ''TestSuite
 
-makeLensesFor [ ("exposedModules", "exposedModulesL")
-              , ("libExposed"    , "libExposedL")
-              , ("libBuildInfo"  , "libBuildInfoL")
-              ] ''Library
+makeLensesSuffixed ''Benchmark
 
+makeLensesSuffixed ''BuildInfo
 
-makeLensesFor [ ("exeName"   , "exeNameL")
-              , ("modulePath", "modulePathL")
-              , ("buildInfo" , "buildInfoL")
-              ] ''Executable
+makeLensesSuffixed ''CondTree
 
+-- | a traversal into the library stanza 
+packageLibraryL :: Traversal' PackageDescription Library
+packageLibraryL = libraryL.each
 
-makeLensesFor [ ("testName"     , "testNameL")
-              , ("testInterface", "testInterfaceL")
-              , ("testBuildInfo", "testBuildInfoL")
-              , ("testEnabled"  , "testEnabledL")
-              ] ''TestSuite
+-- | a traversal into the @exposes-modules@ field of the library stanza 
+packageExposedModulesL :: Traversal' PackageDescription ModuleName
+packageExposedModulesL = packageLibraryL.exposedModulesL.each
 
+-- | a traversal into the @hs-sources@ field of the library stanza 
+packageHsSourcesDirsL :: Traversal' PackageDescription FilePath
+packageHsSourcesDirsL = packageLibraryL.libBuildInfoL.hsSourceDirsL.each
 
-makeLensesFor [ ("benchmarkName", "benchmarkNameL")
-              , ("benchmarkInterface", "benchmarkInterfaceL")
-              , ("benchmarkBuildInfo", "benchmarkBuildInfoL")
-              , ("benchmarkEnabled"  , "benchmarkEnabledL")
-              ] ''Benchmark
-
-
-makeLensesFor [ ("hsSourceDirs"      , "hsSourceDirsL")
-              , ("options"           , "optionsL")
-              , ("defaultLanguage"   , "defaultLanguageL")
-              , ("cppOptions"        , "cppOptionsL")
-              , ("cSources"          , "cSourcesL")
-              , ("ccOptions"         , "ccOptionsL")
-              , ("extraLibDirs"      , "extraLibDirsL")
-              , ("extraLibs"         , "extraLibsL")
-              , ("ldOptions"         , "ldOptionsL")
-              , ("includeDirs"       , "includeDirsL")
-              , ("includes"          , "includesL")
-              , ("targetBuildDepends", "targetBuildDependsL")
-              ] ''BuildInfo
-
-
-makeLensesFor [ ("condTreeData"       , "condTreeDataL")
-              , ("condTreeConstraints", "condTreeConstraintsL")
-              , ("condTreeComponents" , "condTreeComponentsL")
-              ] ''CondTree

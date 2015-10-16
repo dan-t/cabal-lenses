@@ -1,12 +1,7 @@
 {-# Language TemplateHaskell, PatternGuards #-}
 
-module CabalLenses.CondVars
-   ( CondVars(..)
-   , fromDefaults
-   , enableFlag
-   , disableFlag
-   , eval
-   ) where
+module CabalLenses.CondVars where
+import CabalLenses.TH (makeLensesSuffixed) 
 
 import qualified Distribution.PackageDescription as PD
 import Distribution.PackageDescription (Condition(..))
@@ -32,22 +27,19 @@ data CondVars = CondVars
    , compilerVersion :: Maybe Version    -- ^ the user specified compiler version
    } deriving (Show)
 
-
-makeLensesFor [ ("flags", "flagsL")
-              ] ''CondVars
-
+makeLensesSuffixed ''CondVars
 
 -- | Create a 'CondVars' from the default flags of the cabal package description.
 --   The 'os', 'arch' and 'compilerFlavor' fields are initialized by the ones the cabal library was build on.
 fromDefaults :: PD.GenericPackageDescription -> CondVars
-fromDefaults pkgDescrp = CondVars { flags           = flags
+fromDefaults pkgDescrp = CondVars { flags           = theFlags 
                                   , os              = S.buildOS
                                   , arch            = S.buildArch
                                   , compilerFlavor  = buildCompilerFlavor
                                   , compilerVersion = Nothing
                                   }
    where
-      flags = HM.fromList $ map nameWithDflt (PD.genPackageFlags pkgDescrp)
+      theFlags = HM.fromList $ map nameWithDflt (PD.genPackageFlags pkgDescrp)
 
       nameWithDflt PD.MkFlag { PD.flagName = PD.FlagName name, PD.flagDefault = dflt } =
          (name, dflt)
@@ -90,3 +82,4 @@ eval condVars = eval'
 
          | otherwise
          = False
+

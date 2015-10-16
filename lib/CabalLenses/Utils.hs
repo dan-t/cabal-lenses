@@ -1,4 +1,4 @@
-{-# Language CPP #-}
+{-# Language CPP, PatternGuards #-}
 
 module CabalLenses.Utils
    ( findCabalFile
@@ -6,7 +6,7 @@ module CabalLenses.Utils
    , findDistDir
    ) where
 
-import Control.Monad.Trans.Either (EitherT, left, right, runEitherT)
+import Control.Monad.Trans.Either (EitherT, left, right)
 import Control.Monad.IO.Class
 import Control.Monad (filterM)
 import qualified System.IO.Strict as Strict
@@ -28,9 +28,9 @@ io = liftIO
 -- | Find a cabal file starting at the given directory, going upwards the directory
 --   tree until a cabal file could be found. The returned file path is absolute.
 findCabalFile :: FilePath -> EitherT Error IO FilePath
-findCabalFile file = do
+findCabalFile theFile = do
    cabalFile <- io $ do
-      dir <- absoluteDirectory file
+      dir <- absoluteDirectory theFile
       findCabalFile' dir
 
    if cabalFile == FP.empty
@@ -78,9 +78,9 @@ findPackageDB cabalFile = do
       -- | reads the 'package-db: ' field from the sandbox config file and returns the value of the field
       readPackageDB :: FP.FilePath -> IO (Maybe FP.FilePath)
       readPackageDB sandboxConfig = do
-         lines <- lines <$> Strict.readFile (FP.encodeString sandboxConfig)
+         theLines <- lines <$> Strict.readFile (FP.encodeString sandboxConfig)
          return $ do
-            line      <- L.find (package_db `L.isPrefixOf`) lines
+            line      <- L.find (package_db `L.isPrefixOf`) theLines 
             packageDB <- L.stripPrefix package_db line
             return $ FP.decodeString packageDB
 

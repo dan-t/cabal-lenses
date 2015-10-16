@@ -1,5 +1,7 @@
-{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE Rank2Types, CPP #-}
+{-| 
 
+-}
 module CabalLenses.Traversals.Dependency
    ( allDependency
    , allDependencyIf
@@ -8,13 +10,16 @@ module CabalLenses.Traversals.Dependency
    ) where
 
 import CabalLenses.Section (Section(..))
-import CabalLenses.Traversals.Internal (traverseDependency, traverseDependencyIf)
+import CabalLenses.Traversals.Internal (traverseDependency, traverseDependencyIf, having)
 import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
-import Control.Applicative ((<$>), (<*>), pure)
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription))
 import Distribution.Package (Dependency)
+
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative ((<$>), (<*>), pure)
+#endif
 
 
 -- | A traversal for all 'Dependency' of all 'Section'.
@@ -54,5 +59,3 @@ dependencyIf condVars (Executable name) = condExecutablesL . traverse . having n
 dependencyIf condVars (TestSuite name)  = condTestSuitesL . traverse . having name . _2 . traverseDependencyIf condVars
 dependencyIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDependencyIf condVars
 
-
-having name = filtered ((== name) . fst)

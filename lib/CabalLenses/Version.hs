@@ -1,27 +1,28 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, CPP #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.Version' module.
 -- All lenses are named after their field names with a 'L' appended.
 
 module CabalLenses.Version where
+import CabalLenses.TH (makeLensesSuffixed) 
 
 import Distribution.Version
 import Control.Lens
 import Data.Maybe (fromMaybe)
+
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
+#endif
 
-
-makeLensesFor [ ("versionBranch", "versionBranchL")
-              , ("versionTags"  , "versionTagsL")
-              ] ''Version
+makeLensesSuffixed ''Version
 
 
 intervals :: Iso' VersionRange [VersionInterval]
 intervals = iso asVersionIntervals toVersionRange
    where
-      toVersionRange intervals =
-         fromMaybe anyVersion (fromVersionIntervals <$> mkVersionIntervals intervals)
+      toVersionRange theIntervals =
+         fromMaybe anyVersion (fromVersionIntervals <$> mkVersionIntervals theIntervals)
 
 
 lowerBound :: Lens' VersionInterval LowerBound
@@ -31,15 +32,15 @@ lowerBound = _1
 version :: Lens' LowerBound Version
 version = lens getVersion setVersion
    where
-      getVersion (LowerBound vers _)          = vers
-      setVersion (LowerBound _    bound) vers = LowerBound vers bound
+      getVersion (LowerBound theVersion _)          = theVersion
+      setVersion (LowerBound _ theBound) theVersion = LowerBound theVersion theBound 
 
 
 bound :: Lens' LowerBound Bound
 bound = lens getBound setBound
    where
-      getBound (LowerBound _ bound)      = bound
-      setBound (LowerBound vers _) bound = LowerBound vers bound
+      getBound (LowerBound _ theBound)            = theBound
+      setBound (LowerBound theVersion _) theBound = LowerBound theVersion theBound
 
 
 upperBound :: Lens' VersionInterval UpperBound
@@ -48,3 +49,4 @@ upperBound = _2
 
 noLowerBound :: LowerBound
 noLowerBound = LowerBound (Version [0] []) InclusiveBound
+

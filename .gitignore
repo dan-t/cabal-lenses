@@ -1,0 +1,35 @@
+# .gitignore
+
+# my
+ignore/
+notes
+goals
+TODO
+.projectile
+TAGS 
+
+# Haskell
+dist
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+.virtualenv
+.hsenv
+.cabal-sandbox/
+cabal.sandbox.config
+cabal.config
+report.html
+
+# Emacs
+\#*
+*~
+.#*
+\#*\#
+*.log
+TAGS
+
+# OS X
+.DS_Store
+
