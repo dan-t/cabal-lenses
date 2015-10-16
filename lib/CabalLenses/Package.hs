@@ -5,15 +5,14 @@ All lenses are named after their field names with a 'L' appended.
 
 -}
 module CabalLenses.Package where
-import CabalLenses.TH (suffixedFields) 
+import CabalLenses.TH (makeLensesSuffixed) 
 
 import Distribution.Package (PackageName(..) , PackageIdentifier(..) , Dependency(..))
 import Distribution.Version (VersionRange)
 import Control.Lens
 
 
-makeLensesWith suffixedFields ''PackageIdentifier
-
+makeLensesSuffixed ''PackageIdentifier
 
 instance (t ~ PackageName) => Rewrapped PackageName t
 instance Wrapped PackageName where

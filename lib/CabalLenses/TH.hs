@@ -2,10 +2,16 @@ module CabalLenses.TH where
 
 import Control.Lens
 
-import Language.Haskell.TH.Syntax (Name, mkName, nameBase) 
+import Language.Haskell.TH (DecsQ, Name, mkName, nameBase) 
 
 
--- | a field called @"fieldName"@ makes a lens called @"fieldNameL"@
+{-| @makeLensesSuffixed = 'makeLensesWith' 'suffixedFields'@ 
+
+-}
+makeLensesSuffixed :: Name -> DecsQ
+makeLensesSuffixed = makeLensesWith suffixedFields 
+
+-- | a field called @"field"@ makes a lens called @"fieldL"@
 suffixedFields :: LensRules
 suffixedFields = defaultFieldRules & lensField .~ suffixedNamer "L"
 

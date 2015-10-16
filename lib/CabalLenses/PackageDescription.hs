@@ -5,8 +5,9 @@
 -- All lenses are named after their field names with a 'L' appended.
 
 module CabalLenses.PackageDescription where
-import CabalLenses.TH (suffixedFields) 
+import CabalLenses.TH (makeLensesSuffixed) 
 
+import Distribution.ModuleName (ModuleName) 
 import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        , PackageDescription(..)
                                        , Library(..)
@@ -16,21 +17,33 @@ import Distribution.PackageDescription ( GenericPackageDescription(..)
                                        , BuildInfo(..)
                                        , CondTree(..)
                                        )
-import Control.Lens (makeLensesWith)
+import Control.Lens(Traversal',each) 
 
-makeLensesWith suffixedFields ''GenericPackageDescription
+makeLensesSuffixed ''GenericPackageDescription
 
-makeLensesWith suffixedFields ''PackageDescription
+makeLensesSuffixed ''PackageDescription
 
-makeLensesWith suffixedFields ''Library
+makeLensesSuffixed ''Library
 
-makeLensesWith suffixedFields ''Executable
+makeLensesSuffixed ''Executable
 
-makeLensesWith suffixedFields ''TestSuite
+makeLensesSuffixed ''TestSuite
 
-makeLensesWith suffixedFields ''Benchmark
+makeLensesSuffixed ''Benchmark
 
-makeLensesWith suffixedFields ''BuildInfo
+makeLensesSuffixed ''BuildInfo
 
-makeLensesWith suffixedFields ''CondTree
+makeLensesSuffixed ''CondTree
+
+-- | a traversal into the library stanza 
+packageLibraryL :: Traversal' PackageDescription Library
+packageLibraryL = libraryL.each
+
+-- | a traversal into the @exposes-modules@ field of the library stanza 
+packageExposedModulesL :: Traversal' PackageDescription ModuleName
+packageExposedModulesL = packageLibraryL.exposedModulesL.each
+
+-- | a traversal into the @hs-sources@ field of the library stanza 
+packageHsSourcesDirsL :: Traversal' PackageDescription FilePath
+packageHsSourcesDirsL = packageLibraryL.libBuildInfoL.hsSourceDirsL.each
 

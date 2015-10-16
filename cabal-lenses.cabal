@@ -51,6 +51,7 @@ library
         CabalLenses.Traversals.Dependency
         CabalLenses.Utils
         CabalLenses.TH
+
     exposed: True
     buildable: True
     cpp-options: -DCABAL

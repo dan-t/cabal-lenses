@@ -1,7 +1,7 @@
 {-# Language TemplateHaskell, PatternGuards #-}
 
 module CabalLenses.CondVars where
-import CabalLenses.TH (suffixedFields) 
+import CabalLenses.TH (makeLensesSuffixed) 
 
 import qualified Distribution.PackageDescription as PD
 import Distribution.PackageDescription (Condition(..))
@@ -27,9 +27,7 @@ data CondVars = CondVars
    , compilerVersion :: Maybe Version    -- ^ the user specified compiler version
    } deriving (Show)
 
-
-makeLensesWith suffixedFields ''CondVars
-
+makeLensesSuffixed ''CondVars
 
 -- | Create a 'CondVars' from the default flags of the cabal package description.
 --   The 'os', 'arch' and 'compilerFlavor' fields are initialized by the ones the cabal library was build on.
