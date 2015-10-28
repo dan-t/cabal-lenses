@@ -1,3 +1,7 @@
+0.4.7
+-----
+* Raise upper bounds of dependencies
+
 0.4.6
 -----
 * Add several helper functions for cabal
