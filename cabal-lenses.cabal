@@ -11,7 +11,8 @@ description:
     the <https://hackage.haskell.org/package/Cabal Cabal> library.
 category: Utils, Development
 author: Daniel Trstenjak
-tested-with: GHC ==7.6.2 GHC ==7.6.3 GHC ==7.8.3 GHC ==7.10.1 GHC ==8.0.1
+tested-with: GHC ==7.6.2 GHC ==7.6.3 GHC ==7.8.3 GHC ==7.10.1
+             GHC ==8.0.1 GHC ==8.2.1
 extra-source-files:
     README.md
     CHANGELOG
