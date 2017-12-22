@@ -4,6 +4,7 @@ module CabalLenses.Utils
    ( findCabalFile
    , findPackageDB
    , findDistDir
+   , findNewDistDir
    ) where
 
 import Control.Monad.Trans.Either (EitherT, left, right, runEitherT)
@@ -59,7 +60,7 @@ findCabalFile file = do
 
 
 -- | Find the package database of the cabal sandbox from the given cabal file.
---   The returned file path is relative to the directory of the cabal file.
+--   The returned file path is absolute.
 findPackageDB :: FilePath -> EitherT Error IO (Maybe FilePath)
 findPackageDB cabalFile = do
    cabalDir <- io $ absoluteDirectory cabalFile
@@ -69,20 +70,19 @@ findPackageDB cabalFile = do
       then do
          packageDB <- io $ readPackageDB sandboxConfig
          case packageDB of
-              Just db -> right . Just $ stripPrefix cabalDir db
+              Just db -> right . Just $ db
               _       -> left $ "Couldn't find field 'package-db: ' in " ++ (show sandboxConfig)
       else
          right Nothing
 
    where
       -- | reads the 'package-db: ' field from the sandbox config file and returns the value of the field
-      readPackageDB :: FP.FilePath -> IO (Maybe FP.FilePath)
+      readPackageDB :: FP.FilePath -> IO (Maybe FilePath)
       readPackageDB sandboxConfig = do
          lines <- lines <$> Strict.readFile (FP.encodeString sandboxConfig)
          return $ do
-            line      <- L.find (package_db `L.isPrefixOf`) lines
-            packageDB <- L.stripPrefix package_db line
-            return $ FP.decodeString packageDB
+            line <- L.find (package_db `L.isPrefixOf`) lines
+            L.stripPrefix package_db line
 
       sandbox_config = FP.decodeString "cabal.sandbox.config"
       package_db     = "package-db: "
@@ -90,8 +90,7 @@ findPackageDB cabalFile = do
 
 -- | Find the dist directory of the cabal build from the given cabal file. For a non sandboxed
 --   build it's just the directory 'dist' in the cabal build directory. For a sandboxed build
---   it's the directory 'dist/dist-sandbox-*'. The returned file path is relative to the
---   directory of the cabal file.
+--   it's the directory 'dist/dist-sandbox-*'. The returned file path is absolute.
 findDistDir :: FilePath -> IO (Maybe FilePath)
 findDistDir cabalFile = do
    cabalDir   <- absoluteDirectory cabalFile
@@ -100,7 +99,7 @@ findDistDir cabalFile = do
    if hasDistDir
       then do
          files <- filterM FS.isDirectory =<< (FS.listDirectory distDir)
-         return $ (stripPrefix cabalDir) <$> maybe (Just distDir) Just (L.find isSandboxDistDir files)
+         return $ FP.encodeString <$> maybe (Just distDir) Just (L.find isSandboxDistDir files)
       else return Nothing
 
    where
@@ -108,13 +107,14 @@ findDistDir cabalFile = do
          "dist-sandbox-" `L.isPrefixOf` (FP.encodeString . FP.filename $ file)
 
 
-stripPrefix :: FP.FilePath -> FP.FilePath -> FilePath
-stripPrefix prefix file
-   | Just stripped <- FP.stripPrefix prefix file
-   = FP.encodeString stripped
-
-   | otherwise
-   = FP.encodeString file
+-- | Find the new style dist directory of the cabal build from the given cabal file.
+--   The returned file path is absolute.
+findNewDistDir :: FilePath -> IO (Maybe FilePath)
+findNewDistDir cabalFile = do
+   cabalDir   <- absoluteDirectory cabalFile
+   let distDir = cabalDir </> FP.decodeString "dist-newstyle"
+   hasDistDir <- FS.isDirectory distDir
+   return $ if hasDistDir then Just . FP.encodeString $ distDir else Nothing
 
 
 absoluteDirectory :: FilePath -> IO FP.FilePath
