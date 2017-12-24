@@ -5,6 +5,7 @@ module CabalLenses.Section
    ) where
 
 import Distribution.PackageDescription (GenericPackageDescription(..))
+import Distribution.Types.UnqualComponentName (unUnqualComponentName)
 
 type Name = String
 
@@ -20,7 +21,7 @@ data Section = Library
 allSections :: GenericPackageDescription -> [Section]
 allSections pkgDescr =
    concat [ maybe [] (const [Library]) (condLibrary pkgDescr)
-          , map (Executable . fst) (condExecutables pkgDescr)
-          , map (TestSuite . fst) (condTestSuites pkgDescr)
-          , map (Benchmark . fst) (condBenchmarks pkgDescr)
+          , map (Executable . unUnqualComponentName . fst) (condExecutables pkgDescr)
+          , map (TestSuite . unUnqualComponentName . fst) (condTestSuites pkgDescr)
+          , map (Benchmark . unUnqualComponentName . fst) (condBenchmarks pkgDescr)
           ]

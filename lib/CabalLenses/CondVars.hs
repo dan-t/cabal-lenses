@@ -13,7 +13,7 @@ import Distribution.PackageDescription (Condition(..))
 import qualified Distribution.System as S
 import Distribution.System (OS(..), Arch(..))
 import Distribution.Compiler (CompilerFlavor(..), buildCompilerFlavor)
-import Distribution.Version (Version(..), withinRange)
+import Distribution.Version (Version, withinRange)
 import qualified Data.HashMap.Strict as HM
 import Control.Lens
 
@@ -49,8 +49,8 @@ fromDefaults pkgDescrp = CondVars { flags           = flags
    where
       flags = HM.fromList $ map nameWithDflt (PD.genPackageFlags pkgDescrp)
 
-      nameWithDflt PD.MkFlag { PD.flagName = PD.FlagName name, PD.flagDefault = dflt } =
-         (name, dflt)
+      nameWithDflt PD.MkFlag { PD.flagName = name, PD.flagDefault = dflt } =
+         (PD.unFlagName name, dflt)
 
 
 -- | Enable the given flag in 'CondVars'.
@@ -84,8 +84,8 @@ eval condVars = eval'
          | otherwise
          = cflavor == compilerFlavor condVars
 
-      hasVar (PD.Flag (PD.FlagName name))
-         | Just v <- HM.lookup name (flags condVars)
+      hasVar (PD.Flag name)
+         | Just v <- HM.lookup (PD.unFlagName name) (flags condVars)
          = v
 
          | otherwise

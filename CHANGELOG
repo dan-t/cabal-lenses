@@ -1,3 +1,7 @@
+0.6.0
+-----
+* Support cabal 2.0
+
 0.5.0
 -----
 * Add 'findNewDistDir', 'findDistDir' and 'findPackageDB' now return absolute paths

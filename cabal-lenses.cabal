@@ -1,5 +1,5 @@
 name: cabal-lenses
-version: 0.5.0
+version: 0.6.0
 cabal-version: >=1.9.2
 build-type: Simple
 license: BSD3
@@ -36,7 +36,7 @@ library
         base >=3 && <5,
         lens >=4.0.1 && <4.16,
         unordered-containers >=0.2.3.3 && <0.3,
-        Cabal >=1.16.0 && <1.25,
+        Cabal >=2.0.0.2 && <2.1,
         either >=4.1.1 && <4.5,
         system-filepath >=0.4.9 && <0.5,
         system-fileio >=0.3.12 && <0.4,

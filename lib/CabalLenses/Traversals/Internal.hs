@@ -9,10 +9,11 @@ module CabalLenses.Traversals.Internal
 
 import CabalLenses.CondVars (CondVars)
 import qualified CabalLenses.CondVars as CV
-import Distribution.PackageDescription (CondTree(..), ConfVar)
+import Distribution.Types.CondTree (CondTree(..), CondBranch(..))
+import Distribution.PackageDescription (ConfVar)
 import Distribution.Package (Dependency(..))
-import Data.Traversable (traverse)
-import Control.Applicative (pure, (<$>), (<*>))
+import Data.Traversable
+import Control.Applicative
 import Control.Lens (Traversal')
 
 type CondTree' a = CondTree ConfVar [Dependency] a
@@ -23,10 +24,10 @@ traverseDataIf :: CondVars -> Traversal' (CondTree' dat) dat
 traverseDataIf condVars f (CondNode dat constr comps) =
    CondNode <$> f dat
             <*> pure constr
-            <*> (traverse . traverseCompIf condVars) f comps  
+            <*> (traverse . traverseCompIf condVars) f comps
    where
-      traverseCompIf condVars f (cond, ifComp, elseComp) =
-         (,,) <$> pure cond <*> ifComp' <*> elseComp'
+      traverseCompIf condVars f (CondBranch cond ifComp elseComp) =
+         CondBranch <$> pure cond <*> ifComp' <*> elseComp'
          where
             ifComp' | condMatches = traverseDataIf condVars f ifComp
                     | otherwise   = pure ifComp
@@ -44,8 +45,10 @@ traverseData f (CondNode dat constr comps) =
             <*> pure constr
             <*> (traverse . traverseComp) f comps
    where
-      traverseComp f (cond, ifComp, elseComp) =
-         (,,) <$> pure cond <*> traverseData f ifComp <*> (traverse . traverseData) f elseComp
+      traverseComp f (CondBranch cond ifComp elseComp) =
+         CondBranch <$> pure cond
+                    <*> traverseData f ifComp
+                    <*> (traverse . traverseData) f elseComp
 
 
 -- | A traversal for all 'condTreeConstraints' of 'CondTree' that match 'CondVars'.
@@ -53,10 +56,10 @@ traverseDependencyIf :: CondVars -> Traversal' (CondTree' dat) Dependency
 traverseDependencyIf condVars f (CondNode dat constr comps) =
    CondNode <$> pure dat
             <*> traverse f constr
-            <*> (traverse . traverseCompIf condVars) f comps  
+            <*> (traverse . traverseCompIf condVars) f comps
    where
-      traverseCompIf condVars f (cond, ifComp, elseComp) =
-         (,,) <$> pure cond <*> ifComp' <*> elseComp'
+      traverseCompIf condVars f (CondBranch cond ifComp elseComp) =
+         CondBranch <$> pure cond <*> ifComp' <*> elseComp'
          where
             ifComp' | condMatches = traverseDependencyIf condVars f ifComp
                     | otherwise   = pure ifComp
@@ -74,5 +77,7 @@ traverseDependency f (CondNode dat constr comps) =
             <*> traverse f constr
             <*> (traverse . traverseComp) f comps
    where
-      traverseComp f (cond, ifComp, elseComp) =
-         (,,) <$> pure cond <*> traverseDependency f ifComp <*> (traverse . traverseDependency) f elseComp
+      traverseComp f (CondBranch cond ifComp elseComp) =
+         CondBranch <$> pure cond
+                    <*> traverseDependency f ifComp
+                    <*> (traverse . traverseDependency) f elseComp

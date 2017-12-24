@@ -1,4 +1,4 @@
-{-# Language CPP #-}
+{-# Language CPP, PatternGuards #-}
 
 module CabalLenses.Utils
    ( findCabalFile

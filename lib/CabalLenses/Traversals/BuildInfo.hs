@@ -13,13 +13,16 @@ import CabalLenses.PackageDescription
 import Control.Lens
 import Control.Applicative ((<$>), (<*>), pure)
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription), BuildInfo)
+import Distribution.Types.UnqualComponentName (unUnqualComponentName)
 
 -- | A traversal for all 'BuildInfo' of all 'Section'
 allBuildInfo :: Traversal' GenericPackageDescription BuildInfo
-allBuildInfo f (GenericPackageDescription descrp flags lib exes tests benchs) =
+allBuildInfo f (GenericPackageDescription descrp flags lib subLibs foreignLibs exes tests benchs) =
    GenericPackageDescription <$> pure descrp
                              <*> pure flags
                              <*> (_Just . traverseData . libBuildInfoL) f lib
+                             <*> pure subLibs
+                             <*> pure foreignLibs
                              <*> (traverse . _2 . traverseData . buildInfoL) f exes
                              <*> (traverse . _2 . traverseData . testBuildInfoL) f tests
                              <*> (traverse . _2 . traverseData . benchmarkBuildInfoL) f benchs
@@ -40,4 +43,4 @@ buildInfoIf condVars (TestSuite name)  = condTestSuitesL . traverse . having nam
 buildInfoIf condVars (Benchmark name)  = condBenchmarksL . traverse . having name . _2 . traverseDataIf condVars . benchmarkBuildInfoL
 
 
-having name = filtered ((== name) . fst)
+having name = filtered ((== name) . unUnqualComponentName . fst)

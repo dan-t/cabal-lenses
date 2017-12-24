@@ -12,9 +12,8 @@ import Data.Maybe (fromMaybe)
 import Control.Applicative ((<$>))
 
 
-makeLensesFor [ ("versionBranch", "versionBranchL")
-              , ("versionTags"  , "versionTagsL")
-              ] ''Version
+versionBranchL :: Iso' Version [Int]
+versionBranchL = iso versionNumbers mkVersion
 
 
 intervals :: Iso' VersionRange [VersionInterval]
@@ -47,4 +46,4 @@ upperBound = _2
 
 
 noLowerBound :: LowerBound
-noLowerBound = LowerBound (Version [0] []) InclusiveBound
+noLowerBound = LowerBound (mkVersion [0]) InclusiveBound
