@@ -8,8 +8,6 @@ module CabalLenses.Version where
 
 import Distribution.Version
 import Control.Lens
-import Data.Maybe (fromMaybe)
-import Control.Applicative ((<$>))
 
 
 versionBranchL :: Iso' Version [Int]
@@ -19,8 +17,8 @@ versionBranchL = iso versionNumbers mkVersion
 intervals :: Iso' VersionRange [VersionInterval]
 intervals = iso asVersionIntervals toVersionRange
    where
-      toVersionRange intervals =
-         fromMaybe anyVersion (fromVersionIntervals <$> mkVersionIntervals intervals)
+      toVersionRange []        = anyVersion
+      toVersionRange intervals = fromVersionIntervals . mkVersionIntervals $ intervals
 
 
 lowerBound :: Lens' VersionInterval LowerBound
