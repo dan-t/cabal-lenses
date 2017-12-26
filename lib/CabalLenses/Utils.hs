@@ -7,7 +7,7 @@ module CabalLenses.Utils
    , findNewDistDir
    ) where
 
-import Control.Monad.Trans.Either (EitherT, left, right, runEitherT)
+import Control.Monad.Trans.Either (EitherT, left, right)
 import Control.Monad.IO.Class
 import Control.Monad (filterM)
 import qualified System.IO.Strict as Strict

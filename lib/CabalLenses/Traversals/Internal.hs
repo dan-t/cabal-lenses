@@ -12,8 +12,6 @@ import qualified CabalLenses.CondVars as CV
 import Distribution.Types.CondTree (CondTree(..), CondBranch(..))
 import Distribution.PackageDescription (ConfVar)
 import Distribution.Package (Dependency(..))
-import Data.Traversable
-import Control.Applicative
 import Control.Lens (Traversal')
 
 type CondTree' a = CondTree ConfVar [Dependency] a

@@ -11,7 +11,6 @@ import CabalLenses.Traversals.Internal (traverseData, traverseDataIf)
 import CabalLenses.CondVars (CondVars)
 import CabalLenses.PackageDescription
 import Control.Lens
-import Control.Applicative ((<$>), (<*>), pure)
 import Distribution.PackageDescription (GenericPackageDescription(GenericPackageDescription), BuildInfo)
 import Distribution.Types.UnqualComponentName (unUnqualComponentName)
 
