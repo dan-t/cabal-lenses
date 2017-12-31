@@ -1,5 +1,5 @@
 name: cabal-lenses
-version: 0.6.0
+version: 0.7.0
 cabal-version: >=1.9.2
 build-type: Simple
 license: BSD3
