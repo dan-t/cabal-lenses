@@ -1,3 +1,7 @@
+0.8.0
+-----
+* Migrate from EitherT to ExceptT
+
 0.7.1
 -----
 * Raise upper bounds of lens, Cabal and either
