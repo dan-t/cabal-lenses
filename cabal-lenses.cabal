@@ -37,7 +37,6 @@ library
         lens >=4.0.1 && <4.17,
         unordered-containers >=0.2.3.3 && <0.3,
         Cabal >=2.1.0.0 && <2.3,
-        either >=4.1.1 && <4.6,
         system-filepath >=0.4.9 && <0.5,
         system-fileio >=0.3.12 && <0.4,
         strict >=0.3.2 && <0.4,

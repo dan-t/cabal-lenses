@@ -7,7 +7,7 @@ module CabalLenses.Utils
    , findNewDistDir
    ) where
 
-import Control.Monad.Trans.Either (EitherT, left, right)
+import Control.Monad.Trans.Except (ExceptT, throwE)
 import Control.Monad.IO.Class
 import Control.Monad (filterM)
 import qualified System.IO.Strict as Strict
@@ -28,15 +28,15 @@ io = liftIO
 
 -- | Find a cabal file starting at the given directory, going upwards the directory
 --   tree until a cabal file could be found. The returned file path is absolute.
-findCabalFile :: FilePath -> EitherT Error IO FilePath
+findCabalFile :: FilePath -> ExceptT Error IO FilePath
 findCabalFile file = do
    cabalFile <- io $ do
       dir <- absoluteDirectory file
       findCabalFile' dir
 
    if cabalFile == FP.empty
-      then left "Couldn't find Cabal file!"
-      else right . FP.encodeString $ cabalFile
+      then throwE "Couldn't find Cabal file!"
+      else return $ FP.encodeString cabalFile
 
    where
       findCabalFile' dir = do
@@ -61,7 +61,7 @@ findCabalFile file = do
 
 -- | Find the package database of the cabal sandbox from the given cabal file.
 --   The returned file path is absolute.
-findPackageDB :: FilePath -> EitherT Error IO (Maybe FilePath)
+findPackageDB :: FilePath -> ExceptT Error IO (Maybe FilePath)
 findPackageDB cabalFile = do
    cabalDir <- io $ absoluteDirectory cabalFile
    let sandboxConfig = cabalDir </> sandbox_config
@@ -70,10 +70,10 @@ findPackageDB cabalFile = do
       then do
          packageDB <- io $ readPackageDB sandboxConfig
          case packageDB of
-              Just db -> right . Just $ db
-              _       -> left $ "Couldn't find field 'package-db: ' in " ++ (show sandboxConfig)
+              Just db -> return $ Just db
+              _       -> throwE $ "Couldn't find field 'package-db: ' in " ++ (show sandboxConfig)
       else
-         right Nothing
+         return Nothing
 
    where
       -- | reads the 'package-db: ' field from the sandbox config file and returns the value of the field
