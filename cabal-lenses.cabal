@@ -1,12 +1,12 @@
 cabal-version: >=1.9.2
 name: cabal-lenses
-version: 0.8.0
+version: 0.9.0
 license: BSD3
 license-file: LICENSE
 maintainer: daniel.trstenjak@gmail.com
 author: Daniel Trstenjak
 tested-with: ghc ==7.6.2 ghc ==7.6.3 ghc ==7.8.3 ghc ==7.10.1
-             ghc ==8.0.1 ghc ==8.2.1 ghc ==8.4.2
+             ghc ==8.0.1 ghc ==8.2.1 ghc ==8.4.2 ghc ==8.6.3
 synopsis: Lenses and traversals for the Cabal library.
 description:
     Lenses and traversals (compatible with the <https://hackage.haskell.org/package/lens lens> library) for
@@ -40,9 +40,9 @@ library
     ghc-options: -W
     build-depends:
         base >=3 && <5,
-        lens >=4.0.1 && <4.17,
+        lens >=4.0.1 && <4.18,
         unordered-containers >=0.2.3.3 && <0.3,
-        Cabal >=2.1.0.0 && <2.3,
+        Cabal >=2.1.0.0 && <2.5,
         system-filepath >=0.4.9 && <0.5,
         system-fileio >=0.3.12 && <0.4,
         strict >=0.3.2 && <0.4,
