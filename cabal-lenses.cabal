@@ -38,6 +38,7 @@ library
     other-modules:
         CabalLenses.Traversals.Internal
         Paths_cabal_lenses
+    default-language: Haskell2010
     ghc-options: -W
     build-depends:
         base >=4.8 && <5,
