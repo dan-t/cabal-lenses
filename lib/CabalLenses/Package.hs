@@ -29,12 +29,12 @@ instance Wrapped PackageName where
 packageName :: Lens' Dependency PackageName
 packageName = lens getPkgName setPkgName
    where
-      getPkgName (Dependency pkgName _)          = pkgName
-      setPkgName (Dependency _ range) newPkgName = Dependency newPkgName range
+      getPkgName (Dependency pkgName _ _)                 = pkgName
+      setPkgName (Dependency _ range libNames) newPkgName = Dependency newPkgName range libNames
 
 
 versionRange :: Lens' Dependency VersionRange
 versionRange = lens getRange setRange
    where
-      getRange (Dependency _ range)   = range
-      setRange (Dependency pkgName _) = Dependency pkgName
+      getRange (Dependency _ range _)                   = range
+      setRange (Dependency pkgName _ libNames) newRange = Dependency pkgName newRange libNames
