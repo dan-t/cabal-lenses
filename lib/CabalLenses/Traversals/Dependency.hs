@@ -19,8 +19,9 @@ import Distribution.Types.UnqualComponentName (unUnqualComponentName)
 
 -- | A traversal for all 'Dependency' of all 'Section'.
 allDependency :: Traversal' GenericPackageDescription Dependency
-allDependency f (GenericPackageDescription descrp flags lib subLibs foreignLibs exes tests benchs) =
+allDependency f (GenericPackageDescription descrp gpdVers flags lib subLibs foreignLibs exes tests benchs) =
    GenericPackageDescription <$> pure descrp
+                             <*> pure gpdVers
                              <*> pure flags
                              <*> (_Just . traverseDependency) f lib
                              <*> pure subLibs
@@ -32,8 +33,9 @@ allDependency f (GenericPackageDescription descrp flags lib subLibs foreignLibs 
 
 -- | A traversal for all 'Dependency' of all 'Section' that match 'CondVars'.
 allDependencyIf :: CondVars -> Traversal' GenericPackageDescription Dependency
-allDependencyIf condVars f (GenericPackageDescription descrp flags lib subLibs foreignLibs exes tests benchs) =
+allDependencyIf condVars f (GenericPackageDescription descrp gpdVers flags lib subLibs foreignLibs exes tests benchs) =
    GenericPackageDescription <$> pure descrp
+                             <*> pure gpdVers
                              <*> pure flags
                              <*> (_Just . traverseDependencyIf condVars) f lib
                              <*> pure subLibs

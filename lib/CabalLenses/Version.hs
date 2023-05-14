@@ -14,15 +14,18 @@ versionBranchL :: Iso' Version [Int]
 versionBranchL = iso versionNumbers mkVersion
 
 
-intervals :: Iso' VersionRange [VersionInterval]
-intervals = iso asVersionIntervals toVersionRange
-   where
-      toVersionRange []        = anyVersion
-      toVersionRange intervals = fromVersionIntervals . mkVersionIntervals $ intervals
+--intervals :: Iso' VersionRange [VersionInterval]
+--intervals = iso asVersionIntervals toVersionRange
+--   where
+--      toVersionRange []        = anyVersion
+--      toVersionRange intervals = fromVersionIntervals . VersionIntervals $ intervals
 
 
 lowerBound :: Lens' VersionInterval LowerBound
-lowerBound = _1
+lowerBound = lens getLowerBound setLowerBound
+   where
+      getLowerBound (VersionInterval lowerBound _)            = lowerBound
+      setLowerBound (VersionInterval _ upperBound) lowerBound = VersionInterval lowerBound upperBound
 
 
 version :: Lens' LowerBound Version
@@ -40,7 +43,10 @@ bound = lens getBound setBound
 
 
 upperBound :: Lens' VersionInterval UpperBound
-upperBound = _2
+upperBound = lens getUpperBound setUpperBound
+   where
+      getUpperBound (VersionInterval _ upperBound)            = upperBound
+      setUpperBound (VersionInterval lowerBound _) upperBound = VersionInterval lowerBound upperBound
 
 
 noLowerBound :: LowerBound

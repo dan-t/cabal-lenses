@@ -10,6 +10,7 @@ module CabalLenses.CondVars
 
 import qualified Distribution.PackageDescription as PD
 import Distribution.PackageDescription (Condition(..))
+import Distribution.Types.Flag (PackageFlag(..))
 import qualified Distribution.System as S
 import Distribution.System (OS(..), Arch(..))
 import Distribution.Compiler (CompilerFlavor(..), buildCompilerFlavor)
@@ -49,7 +50,7 @@ fromDefaults pkgDescrp = CondVars { flags           = flags
    where
       flags = HM.fromList $ map nameWithDflt (PD.genPackageFlags pkgDescrp)
 
-      nameWithDflt PD.MkFlag { PD.flagName = name, PD.flagDefault = dflt } =
+      nameWithDflt MkPackageFlag { PD.flagName = name, PD.flagDefault = dflt } =
          (PD.unFlagName name, dflt)
 
 
@@ -84,7 +85,7 @@ eval condVars = eval'
          | otherwise
          = cflavor == compilerFlavor condVars
 
-      hasVar (PD.Flag name)
+      hasVar (PD.PackageFlag name)
          | Just v <- HM.lookup (PD.unFlagName name) (flags condVars)
          = v
 

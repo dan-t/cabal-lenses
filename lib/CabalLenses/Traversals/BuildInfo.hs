@@ -16,8 +16,9 @@ import Distribution.Types.UnqualComponentName (unUnqualComponentName)
 
 -- | A traversal for all 'BuildInfo' of all 'Section'
 allBuildInfo :: Traversal' GenericPackageDescription BuildInfo
-allBuildInfo f (GenericPackageDescription descrp flags lib subLibs foreignLibs exes tests benchs) =
+allBuildInfo f (GenericPackageDescription descrp gpdVers flags lib subLibs foreignLibs exes tests benchs) =
    GenericPackageDescription <$> pure descrp
+                             <*> pure gpdVers
                              <*> pure flags
                              <*> (_Just . traverseData . libBuildInfoL) f lib
                              <*> pure subLibs
