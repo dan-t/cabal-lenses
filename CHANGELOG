@@ -1,5 +1,5 @@
-0.2.0
------
+0.11.0
+------
 * Support Cabal 3.6.3
 * Tested with ghc 9.2.7
 
