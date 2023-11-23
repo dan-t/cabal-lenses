@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell, TypeFamilies, FlexibleInstances, MultiParamTypeClasses #-}
+{-# LANGUAGE TemplateHaskell, TypeFamilies, TypeOperators, FlexibleInstances, MultiParamTypeClasses #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.Package' module.

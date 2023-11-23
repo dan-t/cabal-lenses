@@ -6,7 +6,9 @@
 
 module CabalLenses.Version where
 
+import Data.Maybe (fromMaybe)
 import Distribution.Version
+import Distribution.Types.VersionInterval
 import Control.Lens
 
 
@@ -14,11 +16,11 @@ versionBranchL :: Iso' Version [Int]
 versionBranchL = iso versionNumbers mkVersion
 
 
---intervals :: Iso' VersionRange [VersionInterval]
---intervals = iso asVersionIntervals toVersionRange
---   where
---      toVersionRange []        = anyVersion
---      toVersionRange intervals = fromVersionIntervals . VersionIntervals $ intervals
+intervals :: Iso' VersionRange [VersionInterval]
+intervals = iso asVersionIntervals toVersionRange
+   where
+      toVersionRange []        = anyVersion
+      toVersionRange intervals = fromVersionIntervals . fromMaybe noVersion . mkVersionIntervals $ intervals
 
 
 lowerBound :: Lens' VersionInterval LowerBound
