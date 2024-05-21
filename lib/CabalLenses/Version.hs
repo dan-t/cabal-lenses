@@ -20,7 +20,7 @@ intervals :: Iso' VersionRange [VersionInterval]
 intervals = iso asVersionIntervals toVersionRange
    where
       toVersionRange []        = anyVersion
-      toVersionRange intervals = fromVersionIntervals . fromMaybe noVersion . mkVersionIntervals $ intervals
+      toVersionRange intervals = fromMaybe noVersion (fromVersionIntervals <$> mkVersionIntervals intervals)
 
 
 lowerBound :: Lens' VersionInterval LowerBound
