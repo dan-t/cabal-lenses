@@ -5,17 +5,20 @@ module CabalLenses.Utils
    , findPackageDB
    , findDistDir
    , findNewDistDir
+   , symbolicPathListToFilePathList
    ) where
 
 import Control.Monad.Trans.Except (ExceptT, throwE)
 import Control.Monad.IO.Class
 import Control.Monad (filterM)
+import Control.Lens (Iso', iso)
 import qualified System.IO.Strict as Strict
 import qualified Filesystem.Path.CurrentOS as FP
 import Filesystem.Path.CurrentOS ((</>))
 import qualified Filesystem as FS
 import qualified Data.List as L
 import qualified Data.Text as T
+import Distribution.Utils.Path (SymbolicPath, getSymbolicPath, unsafeMakeSymbolicPath, PackageDir, SourceDir)
 
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
@@ -128,3 +131,13 @@ absoluteDirectory file = do
 
 absoluteFile :: FilePath -> IO FP.FilePath
 absoluteFile = FS.canonicalizePath . FP.decodeString
+
+
+symbolicPathListToFilePathList :: Iso' [SymbolicPath PackageDir SourceDir] [FilePath]
+symbolicPathListToFilePathList = iso toFilePathList fromFilePathList
+   where
+      toFilePathList :: [SymbolicPath PackageDir SourceDir] -> [FilePath]
+      toFilePathList symPathList = map getSymbolicPath symPathList
+
+      fromFilePathList :: [FilePath] -> [SymbolicPath PackageDir SourceDir]
+      fromFilePathList strList   = map unsafeMakeSymbolicPath strList
