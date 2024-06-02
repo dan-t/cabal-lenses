@@ -5,6 +5,7 @@ module CabalLenses.Utils
    , findPackageDB
    , findDistDir
    , findNewDistDir
+   , symPathsToFilePaths
    , symbolicPathListToFilePathList
    ) where
 
@@ -132,12 +133,15 @@ absoluteDirectory file = do
 absoluteFile :: FilePath -> IO FP.FilePath
 absoluteFile = FS.canonicalizePath . FP.decodeString
 
-
-symbolicPathListToFilePathList :: Iso' [SymbolicPath PackageDir SourceDir] [FilePath]
-symbolicPathListToFilePathList = iso toFilePathList fromFilePathList
+symPathsToFilePaths :: Iso' [SymbolicPath PackageDir SourceDir] [FilePath]
+symPathsToFilePaths = iso toFilePathList fromFilePathList
    where
       toFilePathList :: [SymbolicPath PackageDir SourceDir] -> [FilePath]
       toFilePathList symPathList = map getSymbolicPath symPathList
 
       fromFilePathList :: [FilePath] -> [SymbolicPath PackageDir SourceDir]
       fromFilePathList strList   = map unsafeMakeSymbolicPath strList
+
+{-# DEPRECATED symbolicPathListToFilePathList "Use symPathsToFilePaths." #-}
+symbolicPathListToFilePathList :: Iso' [SymbolicPath PackageDir SourceDir] [FilePath]
+symbolicPathListToFilePathList = symPathsToFilePaths
