@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DataKinds #-}
 
 -- |
 -- Lenses for several data types of the 'Distribution.PackageDescription' module.
