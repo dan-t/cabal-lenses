@@ -19,7 +19,7 @@ import Filesystem.Path.CurrentOS ((</>))
 import qualified Filesystem as FS
 import qualified Data.List as L
 import qualified Data.Text as T
-import Distribution.Utils.Path (SymbolicPath, getSymbolicPath, unsafeMakeSymbolicPath, PackageDir, SourceDir)
+import Distribution.Utils.Path (SymbolicPath, getSymbolicPath, makeSymbolicPath)
 
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
@@ -133,15 +133,15 @@ absoluteDirectory file = do
 absoluteFile :: FilePath -> IO FP.FilePath
 absoluteFile = FS.canonicalizePath . FP.decodeString
 
-symPathsToFilePaths :: Iso' [SymbolicPath PackageDir SourceDir] [FilePath]
+symPathsToFilePaths :: Iso' [SymbolicPath from to] [FilePath]
 symPathsToFilePaths = iso toFilePathList fromFilePathList
    where
-      toFilePathList :: [SymbolicPath PackageDir SourceDir] -> [FilePath]
+      toFilePathList :: [SymbolicPath from to] -> [FilePath]
       toFilePathList symPathList = map getSymbolicPath symPathList
 
-      fromFilePathList :: [FilePath] -> [SymbolicPath PackageDir SourceDir]
-      fromFilePathList strList   = map unsafeMakeSymbolicPath strList
+      fromFilePathList :: [FilePath] -> [SymbolicPath from to]
+      fromFilePathList strList   = map makeSymbolicPath strList
 
 {-# DEPRECATED symbolicPathListToFilePathList "Use symPathsToFilePaths." #-}
-symbolicPathListToFilePathList :: Iso' [SymbolicPath PackageDir SourceDir] [FilePath]
+symbolicPathListToFilePathList :: Iso' [SymbolicPath from to] [FilePath]
 symbolicPathListToFilePathList = symPathsToFilePaths
